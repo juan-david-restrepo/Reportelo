@@ -42,6 +42,7 @@ interface Reporte {
   placaAcompanante?: string;    // Placa del agente compañero
   foto?: string;                // URL de foto (opcional)
   direccion?: string;          // Dirección textual del incidente
+  huboComparendo?: boolean | null;  // Si hubo comparendo
 }
 
 
@@ -223,6 +224,7 @@ export class MapaReportesComponent implements AfterViewInit, OnInit, OnDestroy {
           agente: agente,
           placaAcompanante: placaAcompanante,
           estado: estado,
+          huboComparendo: r.huboComparendo
         };
       });
 
@@ -263,9 +265,25 @@ export class MapaReportesComponent implements AfterViewInit, OnInit, OnDestroy {
       }
     }
     
+    // Asegura que huboComparendo esté mapeado
+    const reporteMapeado: Reporte = {
+      id: reporte.id,
+      tipo: reporte.tipoInfraccion || reporte.tipo,
+      descripcion: reporte.descripcion,
+      latitud: reporte.latitud,
+      longitud: reporte.longitud,
+      fechaIncidente: reporte.fechaIncidente,
+      horaIncidente: reporte.horaIncidente || null,
+      direccion: reporte.direccion || '',
+      agente: reporte.agente || '',
+      placaAcompanante: reporte.placaAcompanante || '',
+      estado: estado || 'PENDIENTE',
+      huboComparendo: reporte.huboComparendo
+    };
+    
     // Agrega a la lista y actualiza el mapa si está listo
-    this.reportes.push(reporte as Reporte);
-    if (this.mapaListo) this.crearMarcador(reporte as Reporte);
+    this.reportes.push(reporteMapeado);
+    if (this.mapaListo) this.crearMarcador(reporteMapeado);
     this.actualizarContadores();
   }
 
@@ -523,6 +541,29 @@ export class MapaReportesComponent implements AfterViewInit, OnInit, OnDestroy {
         horaDate.setHours(parseInt(h, 10), parseInt(m, 10), 0, 0);
         return horaDate.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
       }
+    }
+    if (reporte.fechaIncidente) {
+      const fechaObj = new Date(reporte.fechaIncidente);
+      if (!isNaN(fechaObj.getTime())) {
+        return fechaObj.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+      }
+    }
+    return '--:--';
+  }
+
+  // Retorna el texto para mostrar el comparendo
+  getComparendoTexto(huboComparendo: boolean | null | undefined): string {
+    if (huboComparendo === true) return 'Sí';
+    if (huboComparendo === false) return 'No';
+    return 'N/A';
+  }
+
+  // Retorna la clase CSS para el comparendo
+  getClaseComparendo(huboComparendo: boolean | null | undefined): string {
+    if (huboComparendo === true) return 'comparendo-si';
+    if (huboComparendo === false) return 'comparendo-no';
+    return 'comparendo-na';
+  }
     }
     if (reporte.fechaIncidente) {
       const fechaObj = new Date(reporte.fechaIncidente);
