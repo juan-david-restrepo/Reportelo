@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+pydantic
+python-dotenv
+sendgrid
+google-generativeai
+dateparser
+gtts
+aiohttp
+sqlalchemy
+pymysql
+cryptography
+requests
+numpy
+pytz
+reportlab
+google-api-core
