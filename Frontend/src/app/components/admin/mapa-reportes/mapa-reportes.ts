@@ -564,15 +564,5 @@ export class MapaReportesComponent implements AfterViewInit, OnInit, OnDestroy {
     if (huboComparendo === false) return 'comparendo-no';
     return 'comparendo-na';
   }
-    }
-    if (reporte.fechaIncidente) {
-      const fechaObj = new Date(reporte.fechaIncidente);
-      if (!isNaN(fechaObj.getTime())) {
-        return fechaObj.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
-      }
-    }
-    return '--:--';
-  }
-
-  
+   
 }
