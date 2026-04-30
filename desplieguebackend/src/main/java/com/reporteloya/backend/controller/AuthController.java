@@ -124,9 +124,14 @@ public class AuthController {
         try {
             AuthResult result = authService.login(request);
             Usuario usuario = result.usuario();
-
             Role role = usuario.getRole();
-            long maxAgeSeconds = jwtService.getExpirationSecondsByRole(role);
+
+            long maxAgeSeconds;
+            if (request.isRememberMe()) {
+                maxAgeSeconds = jwtService.getRememberMeExpirationSeconds();
+            } else {
+                maxAgeSeconds = jwtService.getExpirationSecondsByRole(usuario.getRole());
+            }
             setJwtCookie(response, result.token(), maxAgeSeconds);
 
             // 🔄 Sincronizar usuario con Chat AI

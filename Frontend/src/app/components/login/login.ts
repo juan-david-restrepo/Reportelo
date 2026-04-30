@@ -28,7 +28,7 @@ export class Login {
     this.formLogin = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
-      
+      rememberMe: [false]
     });
   }
 
@@ -43,9 +43,9 @@ export class Login {
       return;
     }
 
-    const { email, password } = this.formLogin.value;
+    const { email, password, rememberMe } = this.formLogin.value;
 
-    this.authService.login(email, password).pipe(
+    this.authService.login(email, password, rememberMe).pipe(
       switchMap(() => this.authService.refreshUser())
     ).subscribe({
       next: () => {

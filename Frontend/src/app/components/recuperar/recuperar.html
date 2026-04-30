@@ -2,6 +2,9 @@
 
 <div class="container">
   <div class="reset-container">
+    <div class="icon-wrapper">
+      <i class='bx bx-lock-open-alt'></i>
+    </div>
     <h2>RECUPERAR CONTRASEÑA</h2>
 
     <p>
@@ -26,7 +29,10 @@
         [disabled]="form.invalid || loading"
       >
         {{ loading ? 'Enviando...' : 'Enviar enlace' }}
+        <i class='bx bxs-send'></i>
       </button>
+
+      <hr class="divider">
 
       <a routerLink="/login">
         <i class="bx bx-arrow-back"></i> <span>Volver a login</span>

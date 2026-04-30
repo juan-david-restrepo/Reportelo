@@ -109,7 +109,7 @@
             [attr.data-aos-delay]="i * 100"
           >
             <div class="member-avatar">
-              <img [src]="miembro.imagen" [alt]="miembro.nombre" (error)="miembro.imagen = 'https://ui-avatars.com/api/?name=' + miembro.nombre + '&background=3b82f6&color=fff&size=150'">
+              <img [src]="miembro.imagen" [alt]="miembro.nombre" loading="lazy" (error)="miembro.imagen = 'https://ui-avatars.com/api/?name=' + miembro.nombre + '&background=3b82f6&color=fff&size=150'">
             </div>
             <h3>{{ miembro.nombre }}</h3>
             <span class="member-role">{{ miembro.rol }}</span>

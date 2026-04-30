@@ -35,6 +35,9 @@ public class JwtService {
     @Value("${jwt.multiplier.ciudadano}")
     private int multiplierCiudadano;
 
+    @Value("${jwt.expiration.remember.me.ms}")
+    private long rememberMeExpirationMs;
+
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -118,6 +121,32 @@ public class JwtService {
         return getExpirationByRole(role) / 1000;
     }
 
+    /**
+     * Genera el token JWT con expiración de "Recuérdame" (14 días).
+     * Seguro para aplicaciones gubernamentales: mismo algoritmo HS256, HttpOnly cookie.
+     */
+    public String generateRememberMeToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+        if (userDetails instanceof Usuario customUsuario) {
+            extraClaims.put("role", customUsuario.getRole().name());
+            extraClaims.put("userId", customUsuario.getId());
+        }
+
+        return Jwts.builder()
+                .setClaims(extraClaims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + rememberMeExpirationMs))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    /**
+     * Obtiene la expiración en segundos para "Recuérdame" (14 días).
+     */
+    public long getRememberMeExpirationSeconds() {
+        return rememberMeExpirationMs / 1000;
+    }
+
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
@@ -143,6 +172,5 @@ public class JwtService {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
-
     
 }

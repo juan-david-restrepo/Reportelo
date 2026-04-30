@@ -13,4 +13,6 @@ import lombok.NoArgsConstructor;
 public class LoginRequest {
     private String email;
     private String password;
+    @Builder.Default
+    private boolean rememberMe = false;
 }

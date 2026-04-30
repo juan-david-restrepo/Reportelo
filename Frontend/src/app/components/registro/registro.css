@@ -49,6 +49,10 @@
   padding: 40px;
 }
 
+.registro-container h2 {
+  color: #007BFF;
+}
+
 #registroForm {
   display: flex;
   flex-direction: column;

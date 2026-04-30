@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -92,7 +93,14 @@ public class AuthService {
         return Map.of(
             "message", "Registro exitoso. Por favor, verifica tu correo electrónico.",
             "email", request.getEmail(),
-            "success", true
+            "success", true,
+            "user", Map.of(
+                "id", nuevoUsuario.getId(),
+                "email", nuevoUsuario.getEmail(),
+                "nombreCompleto", nuevoUsuario.getNombreCompleto(),
+                "tipoDocumento", nuevoUsuario.getTipoDocumento(),
+                "numeroDocumento", nuevoUsuario.getNumeroDocumento()
+            )
         );
     }
 
@@ -185,7 +193,12 @@ public class AuthService {
             throw new BadCredentialsException("Debes verificar tu correo electrónico antes de iniciar sesión.");
         }
 
-        String jwtToken = jwtService.generateTokenWithRole(usuario, usuario.getRole());
+        String jwtToken;
+        if (request.isRememberMe()) {
+            jwtToken = jwtService.generateRememberMeToken(new HashMap<>(), usuario);
+        } else {
+            jwtToken = jwtService.generateTokenWithRole(usuario, usuario.getRole());
+        }
 
         return new AuthResult(jwtToken, usuario);
     }
